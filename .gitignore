@@ -1,0 +1,27 @@
+# environnement
+
+venv/
+venv
+
+.env
+
+# pycache
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Generate files
+dist/
+build/
+*.egg-info/
+
+saves/
+*.json
