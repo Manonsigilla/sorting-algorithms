@@ -38,20 +38,28 @@ def selection_sort(arr: list[float], callback=None) -> list[float]:
 
 def bubble_sort(arr: list[float], callback=None) -> list[float]:
     """
-    Tri à bulles — O(n²)
+    Tri à bulles — O(n²), O(n) si déjà trié
     Compare chaque paire de voisins et les échange si nécessaire.
     Les grands éléments "remontent" comme des bulles à chaque passage.
+    Optimisation : s'arrête dès qu'un passage ne fait aucun échange.
     """
     arr = arr.copy()
     n = len(arr)
 
     for i in range(n):
+        swapped = False  # Optimisation : détecte si la liste est déjà triée
+
         # À chaque tour, les i derniers éléments sont déjà triés
         for j in range(n - i - 1):
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
                 if callback:
                     callback(arr.copy(), (j, j + 1))
+
+        # Si aucun échange n'a eu lieu, la liste est triée
+        if not swapped:
+            break
 
     return arr
 
@@ -146,8 +154,14 @@ def _partition(arr, low, high, callback):
     """
     Place le pivot à sa position définitive.
     Tous les éléments à gauche sont plus petits, à droite plus grands.
+    Optimisation : pivot aléatoire pour éviter le pire cas sur liste triée.
     """
-    pivot = arr[high]  # On choisit le dernier élément comme pivot
+    import random
+    # Échange un élément aléatoire avec le dernier pour diversifier le pivot
+    rand_idx = random.randint(low, high)
+    arr[rand_idx], arr[high] = arr[high], arr[rand_idx]
+
+    pivot = arr[high]  # Le pivot est maintenant à la dernière position
     i = low - 1        # Index du dernier élément plus petit que le pivot
 
     for j in range(low, high):
@@ -176,9 +190,10 @@ def _quick_sort_helper(arr, low, high, callback):
 def quick_sort(arr: list[float], callback=None) -> list[float]:
     """
     Tri rapide — O(n log n) en moyenne, O(n²) dans le pire cas
-    Choisit un pivot, place les petits à gauche et les grands à droite,
+    Choisit un pivot aléatoire, place les petits à gauche et les grands à droite,
     puis recommence récursivement sur chaque côté.
     Trie sur place, très rapide en pratique.
+    Le pivot aléatoire réduit fortement le risque du pire cas.
     """
     arr = arr.copy()
     _quick_sort_helper(arr, 0, len(arr) - 1, callback)
