@@ -7,6 +7,18 @@
 #   python main.py --algo all --bench
 #   python main.py --algo bubble --gui
 #   python main.py --algo all --gui --threads
+# 
+# #Comparaison complète de tous les algos
+# python main.py --algo all --bench-compare
+
+#  Résumé statistique complet
+# python main.py --algo all --bench-summary
+
+#  Comparaison 1 vs 1
+# python main.py --algo all --bench-1v1 bubble quick
+
+#  Benchmark simple (ancien mode)
+# python main.py --algo all --bench
 # =============================================================================
 
 import argparse
@@ -58,6 +70,23 @@ def parse_args():
         help="Exécuter les algos en parallèle (requiert --algo all --gui)",
     )
 
+    parser.add_argument(
+        "--bench-compare",
+        action="store_true",
+        help="Lancer la comparaison complète de tous les algos",
+    )
+    parser.add_argument(
+        "--bench-summary",
+        action="store_true",
+        help="Afficher le résumé statistique complet",
+    )
+    parser.add_argument(
+        "--bench-1v1",
+        nargs=2,
+        metavar=("ALGO1", "ALGO2"),
+        help="Comparer deux algos en 1 vs 1 (ex: --bench-1v1 bubble quick)",
+    )
+
     return parser.parse_args()
 
 
@@ -75,6 +104,36 @@ def resolve_algos(algo_name: str) -> list[tuple]:
 def main():
     args = parse_args()
     algos = resolve_algos(args.algo)
+
+  # --- Mode benchmark comparaison complète ---
+    if args.bench_compare:
+        from benchmark import compare_all_algos
+        sizes = [100, 500, 1000, 5000, 10000]
+        algos = list(ALGORITHMS.items())
+        compare_all_algos(algos, sizes)
+        return
+    
+    # --- Mode benchmark résumé ---
+    if args.bench_summary:
+        from benchmark import benchmark_summary
+        sizes = [100, 500, 1000, 5000, 10000]
+        algos = list(ALGORITHMS.items())
+        benchmark_summary(algos, sizes)
+        return
+    
+    # --- Mode benchmark 1 vs 1 ---
+    if args.bench_1v1:
+        from benchmark import compare_two_algos
+        algo1_name, algo2_name = args.bench_1v1
+        
+        if algo1_name not in ALGORITHMS or algo2_name not in ALGORITHMS:
+            print("Erreur : un des algorithmes n'existe pas")
+            print(f"Algos disponibles : {', '.join(ALGORITHMS.keys())}")
+            return
+        
+        sizes = [100, 500, 1000, 5000, 10000]
+        compare_two_algos(algo1_name, ALGORITHMS[algo1_name], algo2_name, ALGORITHMS[algo2_name], sizes)
+        return
 
     # --- Mode benchmark ---
     # Importé ici (et non en haut du fichier) pour ne pas charger
