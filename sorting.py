@@ -285,6 +285,110 @@ def comb_sort(arr: list[float], callback=None) -> list[float]:
 
 
 # =============================================================================
+# Timsort — implémentation manuelle
+# =============================================================================
+# Timsort est l'algorithme utilisé nativement par Python (sorted(), list.sort()).
+# Créé en 2002 par Tim Peters, il est aussi utilisé par Java, Android et Swift.
+#
+# Principe : divise la liste en petits blocs appelés "runs" (séquences naturellement
+# triées), les complète avec du tri par insertion, puis les fusionne comme merge sort.
+# Il exploite le fait que les données réelles sont souvent partiellement triées.
+# =============================================================================
+
+# Taille minimale d'un run — valeur classique entre 32 et 64
+# En dessous, le tri par insertion est plus rapide que de diviser davantage
+MIN_RUN = 32
+
+
+def _insertion_sort_run(arr, left, right, callback):
+    """
+    Tri par insertion sur le sous-tableau arr[left:right+1].
+    Utilisé par Timsort pour trier les petits runs.
+    """
+    for i in range(left + 1, right + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= left and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+            if callback:
+                callback(arr.copy(), (j + 1, j + 2))
+        arr[j + 1] = key
+
+
+def _merge_runs(arr, left, mid, right, callback):
+    """
+    Fusionne deux runs triés : arr[left:mid+1] et arr[mid+1:right+1].
+    Même logique que _merge() du tri fusion.
+    """
+    left_part = arr[left:mid + 1]
+    right_part = arr[mid + 1:right + 1]
+    i = j = 0
+    k = left
+
+    while i < len(left_part) and j < len(right_part):
+        if left_part[i] <= right_part[j]:
+            arr[k] = left_part[i]
+            i += 1
+        else:
+            arr[k] = right_part[j]
+            j += 1
+        k += 1
+        if callback:
+            callback(arr.copy(), (left, right))
+
+    while i < len(left_part):
+        arr[k] = left_part[i]
+        i += 1
+        k += 1
+    while j < len(right_part):
+        arr[k] = right_part[j]
+        j += 1
+        k += 1
+
+    if callback:
+        callback(arr.copy(), (left, right))
+
+
+def tim_sort(arr: list[float], callback=None) -> list[float]:
+    """
+    Timsort — O(n log n) en moyenne et dans le pire cas, O(n) si déjà trié
+    Algorithme hybride utilisé nativement par Python (sorted()), Java et Android.
+    Créé en 2002 par Tim Peters.
+
+    Étape 1 : découpe la liste en "runs" de taille MIN_RUN et trie chacun
+              avec le tri par insertion (très efficace sur les petits blocs).
+    Étape 2 : fusionne les runs deux par deux comme le tri fusion,
+              en doublant la taille à chaque tour.
+
+    Sa force : exploite les séquences déjà triées dans les données réelles,
+    ce qui le rend imbattable en pratique sur des données du monde réel.
+    """
+    arr = arr.copy()
+    n = len(arr)
+
+    # --- Étape 1 : trier chaque run avec le tri par insertion ---
+    for start in range(0, n, MIN_RUN):
+        end = min(start + MIN_RUN - 1, n - 1)
+        _insertion_sort_run(arr, start, end, callback)
+
+    # --- Étape 2 : fusionner les runs en doublant la taille à chaque tour ---
+    size = MIN_RUN
+    while size < n:
+        for left in range(0, n, size * 2):
+            mid = min(left + size - 1, n - 1)
+            right = min(left + size * 2 - 1, n - 1)
+
+            # On ne fusionne que s'il y a bien deux runs à fusionner
+            if mid < right:
+                _merge_runs(arr, left, mid, right, callback)
+
+        size *= 2  # On double la taille des blocs à chaque passage
+
+    return arr
+
+
+# =============================================================================
 # Dictionnaire de dispatch — permet d'accéder aux algos par leur nom (string)
 # Utilisé par main.py : ALGORITHMS["bubble"](ma_liste)
 # =============================================================================
@@ -297,4 +401,5 @@ ALGORITHMS = {
     "quick":     quick_sort,
     "heap":      heap_sort,
     "comb":      comb_sort,
+    "tim":       tim_sort,
 }

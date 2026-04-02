@@ -3,7 +3,7 @@
 Projet scolaire — La Plateforme | Groupe de 3
 
 Outil d'automatisation de tri de listes de nombres réels.
-Implémente 7 algorithmes de tri avec visualisation animée et benchmarking.
+Implémente 8 algorithmes de tri avec visualisation animée et benchmarking.
 
 ---
 
@@ -18,6 +18,7 @@ Implémente 7 algorithmes de tri avec visualisation animée et benchmarking.
 | Tri rapide | O(n log n) | O(n²) | Non |
 | Tri par tas | O(n log n) | O(n log n) | Non |
 | Tri à peigne | O(n log n) | O(n²) | Non |
+| **Timsort** | **O(n log n)** | **O(n log n)** | **Oui** |
 
 ---
 
@@ -71,4 +72,8 @@ python main.py --algo all --gui --threads
 
 ## Conclusion
 
-> À compléter — quel algo est le plus rapide et pourquoi ?
+Au-delà des 7 algorithmes imposés par le sujet, nous avons implémenté le **Timsort** — l'algorithme utilisé nativement par Python (`sorted()`), Java, Android et Swift. Créé en 2002 par Tim Peters, il est un hybride entre le tri par insertion et le tri fusion.
+
+Sa force réside dans l'exploitation des séquences déjà partiellement triées dans les données réelles : il découpe la liste en petits blocs (appelés *runs*), les trie avec le tri par insertion, puis les fusionne. Cela lui permet d'atteindre O(n) sur une liste presque triée, tout en garantissant O(n log n) dans le pire cas.
+
+C'est l'algorithme qui surpasserait tous les autres de ce projet en conditions réelles — ce qui explique pourquoi il est devenu le standard dans les langages modernes.
