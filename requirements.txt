@@ -4,3 +4,6 @@ pygame==2.6.0
 # Matplotlib + Numpy
 matplotlib==3.7.2
 numpy>=1.24.0
+
+# psutil
+psutil==7.2.2

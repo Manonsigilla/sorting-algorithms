@@ -12,6 +12,7 @@ __pycache__/
 *.pyo
 *.pyd
 .python
+rapports_analyse/
 
 # IDE
 .idea/
