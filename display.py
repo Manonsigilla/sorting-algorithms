@@ -385,8 +385,12 @@ class SorterView:
 class SortApp:
     def __init__(self, algos, base_array):
         pygame.init()
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Les Papyrus de Heron - Visualisation")
+        
+        self.scroll_y = 0
+        self.max_scroll = 0
+        self.is_fullscreen = False
         
         self.font_title = pygame.font.SysFont("Garamond, Times New Roman", 28, bold=True)
         self.font = pygame.font.SysFont("Garamond, Times New Roman", 20, bold=True)
@@ -580,19 +584,34 @@ class SortApp:
     def draw_summary(self):
         self.screen.blit(self.bg_surface, (0, 0))
         
+        card_w, card_h, gap = 360, 220, 20
+        win_w, win_h = self.screen.get_size()
+        
+        # Calculer le nombre de colonnes dynamiquement
+        cols = max(1, (win_w - 40 + gap) // (card_w + gap))
+        rows = (len(self.run_results) + cols - 1) // cols
+        
+        # Calculer la limite du scroll
+        total_content_height = 130 + rows * (card_h + gap)
+        self.max_scroll = max(0, total_content_height - win_h + 50)
+        
+        # Appliquer le scroll aux boutons
+        self.btn_back.rect.topleft = (20, 20 - self.scroll_y)
+        self.btn_csv.rect.topleft = (150, 20 - self.scroll_y)
+        self.btn_pdf.rect.topleft = (300, 20 - self.scroll_y)
+        
         self.btn_back.draw(self.screen)
         self.btn_csv.draw(self.screen)
         self.btn_pdf.draw(self.screen)
         
         title = self.font_title.render("Les Papyrus de Heron - Decryptage", True, COLOR_GOLD)
-        self.screen.blit(title, (20, 80))
+        self.screen.blit(title, (20, 80 - self.scroll_y))
         
-        card_w, card_h, gap = 360, 190, 20
-        start_x, start_y = 20, 130
+        start_x, start_y = 20, 130 - self.scroll_y
         
         for i, res in enumerate(self.run_results):
-            x = start_x + (i % 3) * (card_w + gap)
-            y = start_y + (i // 3) * (card_h + gap)
+            x = start_x + (i % cols) * (card_w + gap)
+            y = start_y + (i // cols) * (card_h + gap)
             
             meta = ALGO_METADATA[res["id"]]
             
@@ -651,6 +670,33 @@ class SortApp:
                 if event.type == pygame.QUIT:
                     running = False
                 
+                # Gestion du plein écran (Touche F11)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+                    global WINDOW_WIDTH, WINDOW_HEIGHT
+                    self.is_fullscreen = not self.is_fullscreen
+                    if self.is_fullscreen:
+                        info = pygame.display.Info()
+                        WINDOW_WIDTH, WINDOW_HEIGHT = info.current_w, info.current_h
+                        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
+                    else:
+                        WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 800
+                        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
+                    
+                    self.bg_surface = create_bg_gradient(WINDOW_WIDTH, WINDOW_HEIGHT)
+                    self.init_views()
+
+                # Gestion de la redimension de la fenêtre à la souris
+                if event.type == pygame.VIDEORESIZE and not self.is_fullscreen:
+                    WINDOW_WIDTH, WINDOW_HEIGHT = event.w, event.h
+                    self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
+                    self.bg_surface = create_bg_gradient(WINDOW_WIDTH, WINDOW_HEIGHT)
+                    self.init_views()
+
+                # Gestion de la molette de souris (Scroll)
+                if event.type == pygame.MOUSEWHEEL and self.state == "SUMMARY":
+                    self.scroll_y -= event.y * 40
+                    self.scroll_y = max(0, min(self.scroll_y, self.max_scroll))
+                
                 if self.state in ["MENU", "RUNNING"]:
                     if self.dropdown.handle_event(event, pos):
                         if not self.dropdown.is_open and self.state == "MENU": self.init_views()
@@ -690,6 +736,7 @@ class SortApp:
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         if self.btn_back.is_hovered:
                             self.run_results = []
+                            self.scroll_y = 0
                             self.state = "MENU"
                         elif self.btn_csv.is_hovered: self._export_csv()
                         elif self.btn_pdf.is_hovered: self._export_pdf()
