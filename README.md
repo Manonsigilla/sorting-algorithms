@@ -170,21 +170,22 @@ Ces outils permettent de **visualiser concrètement** l’écart entre les algor
 
 ---
 
-## Aspect Visuel et Multithreading (Pygame)
+---
 
-Afin d'apporter un aspect visuel à l'efficacité des algorithmes de tri, une interface graphique a été développée en utilisant **Pygame**.
+## Aspect Visuel et Multithreading : Les Papyrus de Héron
+
+Afin d'apporter un aspect visuel à l'efficacité des algorithmes de tri, une interface graphique a été développée en utilisant **Pygame** sur le thème visuel moderne égyptien "Les Papyrus de Héron" (nuits étoilées, effets de verre et accents dorés).
 L'exécution de l'interface utilise le **multithreading** : l'interface tourne sur le thread principal pour rester fluide, tandis que chaque algorithme s'exécute sur son propre thread, permettant d'observer les comparaisons simultanément (parallélisation).
 
 Pour bien comprendre ce qui se passe à l'écran, la longueur des barres encode la valeur (plus c'est grand, plus c'est haut) et un code couleur spécifique a été mis en place :
 
-- **Bleu** : État neutre de l'élément.
-- **Orange** : Barres actuellement comparées.
-- **Rouge** : Barre active ou en cours de déplacement (swap).
-- **Vert menthe** : Minimum trouvé (dans le tri par sélection) ou pivot actuel (tri rapide).
-- **Violet** : Pivot secondaire (tri rapide).
-- **Vert** : Position définitivement triée de l'élément.
+- **Bleu Nuit (Lapis Lazuli)** : État neutre de l'élément (`COLOR_LAPIS`).
+- **Rouge Cornaline** : Barre active ou en cours de déplacement/swap (`COLOR_CARNELIAN`).
+- **Doré (Or)** : Position définitivement triée de l'élément ou mise en évidence d'une fin de tri (`COLOR_GOLD`).
+- **Vert Émeraude / Rouge Alizarine** : Badges signalant respectivement la stabilité ou l'instabilité de l'algorithme.
+- **Beige doux (Papyrus)** : Texte principal et descriptions (`COLOR_PAPYRUS`).
 
-Les compteurs en haut de chaque algorithme permettent de visualiser concrètement pourquoi des algorithmes en *O(n log n)* sont plus performants que ceux en *O(n²)* en comptant le nombre d'étapes nécessaires.
+Les compteurs en haut de chaque manuscrit (algorithme) permettent de visualiser concrètement pourquoi des algorithmes en *O(n log n)* sont plus performants que ceux en *O(n²)* en comptant le nombre de comparaisons et d'échanges nécessaires.
 
 ---
 
