@@ -1,198 +1,97 @@
-# sorting-algorithms
+# Algorithmes de Tri - Les Papyrus de Heron
 
-Projet scolaire — La Plateforme | Groupe de 3
+## Contexte du projet
 
-Outil d'automatisation de tri de listes de nombres réels.
-Implémente 8 algorithmes de tri avec visualisation animée et benchmarking.
+Ce projet a pour but d'implementer, de comparer et d'analyser les performances de plusieurs algorithmes de tri. En nous glissant dans la peau d'un developpeur aidant le celebre mathematicien Heron d'Alexandrie, nous avons developpe un outil complet permettant a la fois une analyse mathematique rigoureuse en console (benchmarking) et une visualisation educative via une interface graphique interactive.
 
----
+Le projet inclut l'etude de 8 algorithmes :
+- Tri par selection
+- Tri a bulles
+- Tri par insertion
+- Tri fusion
+- Tri rapide (Quick sort)
+- Tri par tas (Heap sort)
+- Tri a peigne (Comb sort)
+- Timsort
 
-## Algorithmes implémentés
+## Structure du Repository
 
-| Algorithme | Complexité moyenne | Complexité pire cas | Mémoire supplémentaire |
-| --- | --- | --- | --- |
-| Tri par sélection | O(n²) | O(n²) | Non |
-| Tri à bulles | O(n²) | O(n) si déjà trié | Non |
-| Tri par insertion | O(n²) | O(n) si déjà trié | Non |
-| Tri fusion | O(n log n) | O(n log n) | Oui |
-| Tri rapide | O(n log n) | O(n²) | Non |
-| Tri par tas | O(n log n) | O(n log n) | Non |
-| Tri à peigne | O(n log n) | O(n²) | Non |
-| **Timsort** | **O(n log n)** | **O(n log n)** | **Oui** |
+- `sorting.py` : Contient l'implementation pure de tous les algorithmes de tri.
+- `display.py` : Gere l'interface graphique interactive, le multithreading, la recolte des metriques et la generation des exports (CSV/PDF).
+- `main.py` : Point d'entree du programme permettant de coordonner l'execution avec differents arguments en ligne de commande.
+- `requirements.txt` : Liste des dependances necessaires au bon fonctionnement du projet.
 
----
+## Installation et Utilisation
 
-## Améliorations apportées
+Il est fortement recommande d'utiliser un environnement virtuel (Python 3.9+). Voici les instructions selon votre configuration et votre systeme d'exploitation.
 
-- **Tri à bulles** : ajout d'un flag `swapped` — s'arrête dès qu'un passage ne fait aucun échange, ce qui le rend O(n) sur une liste déjà triée.
-- **Tri rapide** : pivot aléatoire au lieu du dernier élément — réduit fortement le risque de tomber sur le pire cas O(n²) avec une liste déjà triée.
-- **Affichage terminal** : l'input n'est affiché qu'une fois, les résultats sont alignés par algo.
-- **Flag `--reverse`** : permet de trier dans l'ordre décroissant.
+### Option 1 : Avec l'environnement standard Python (venv)
 
----
-
-## Installation
-
-```bash
+**Sous Windows :**
+```cmd
+python -m venv sorting_env
+sorting_env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Utilisation
+**Sous macOS et Linux :**
+```bash
+python3 -m venv sorting_env
+source sorting_env/bin/activate
+pip3 install -r requirements.txt
+```
+
+### Option 2 : Avec Anaconda (Tous OS)
 
 ```bash
-# Trier une liste dans le terminal
-python main.py --algo bubble --list 3.5 1.2 8.0 4.0
-
-# Trier avec tous les algos
-python main.py --algo all --list 3.5 1.2 8.0 4.0
-
-# Trier dans l'ordre décroissant
-python main.py --algo quick --list 3.5 1.2 8.0 4.0 --reverse
-
-# Lancer le benchmarking
-python main.py --algo all --bench
-
-# Visualisation animée (1 algo)
-python main.py --algo quick --gui
-
-# Visualisation animée (tous les algos, séquentiel)
-python main.py --algo all --gui
-
-# Visualisation animée (tous les algos, en parallèle)
-python main.py --algo all --gui --threads
+conda create -n sorting_env python=3.10 -y
+conda activate sorting_env
+pip install -r requirements.txt
 ```
 
----
+### Lancement de l'application
 
-## Observations sur les performances
+Une fois l'environnement active et les dependances installees, vous pouvez executer le projet depuis la racine du dossier :
 
-Après avoir lancé les différents benchmarks (`--bench`, `--bench-compare`, `--bench-summary`, `--bench-1v1`), on observe clairement la différence de comportement entre les algorithmes en `O(n²)` et ceux en `O(n log n)`.
+1. Lancer l'interface graphique avec tous les algorithmes en parallele :
+    ```bash
+    python main.py --algo all --gui --threads
+    ```
+    *(Note : Sur macOS/Linux, utilisez `python3` au lieu de `python` si necessaire).*
 
-### 1. Algorithmes en O(n²)
+2. Lancer le mode benchmark pur (sans interface) pour mesurer les temps CPU exacts en console :
+    ```bash
+    python main.py --algo all --bench
+    ```
 
-Les algorithmes naïfs (sélection, bulles, insertion, peigne) deviennent rapidement impraticables lorsque la taille de la liste augmente :
+## L'Interface Graphique : Les Papyrus de Heron
 
-- Pour des tailles de l’ordre de 100 à 500, les temps restent raisonnables.
-- Au‑delà de quelques milliers d’éléments, les temps d’exécution explosent et les écarts entre `O(n²)` et `O(n log n)` deviennent très visibles.
-- Le **tri à bulles optimisé** s’en sort nettement mieux sur des listes déjà triées ou presque triées grâce au flag `swapped`, où il se comporte en pratique comme un algorithme en `O(n)`.
+Afin d'apporter un aspect visuel a l'efficacite des algorithmes de tri, une interface a ete developpee en utilisant Pygame. Nous avons choisi un theme esthetique inspire de l'Egypte antique en l'honneur d'Heron d'Alexandrie :
 
-### 2. Algorithmes en O(n log n)
+- Le Design (Glassmorphism) : Les couleurs rappellent les materiaux historiques de l'Egypte. Le Papyrus pour les textes, le Lapis-lazuli pour les barres au repos, la Cornaline (rouge/orange) pour les elements en cours de comparaison ou d'echange, et l'Or pour les elements definitivement tries.
+- L'Audio : Des retours sonores se declenchent dynamiquement lors des echanges et a la fin des tris.
+- Le Multithreading : Chaque algorithme s'execute sur son propre thread de maniere asynchrone, permettant d'observer une veritable "course" en temps reel sans bloquer le rendu de la fenetre principale.
+- Rapports d'Analyse : A la fin de l'execution, un tableau recapitulatif permet de visualiser les performances (Temps, Etapes, CPU, Complexite). Ces donnees peuvent etre exportees en PDF ou CSV dans le dossier `rapports_analyse/`.
 
-Les algorithmes plus avancés (fusion, rapide, tas, peigne en pratique, timsort) montrent une montée en charge beaucoup plus progressive :
+## Analyse des Algorithmes et Concepts Cles
 
-- **Tri rapide (quick sort)** est souvent le plus rapide sur des données aléatoires grâce au pivot aléatoire, tout en gardant un coût mémoire très faible (tri en place).
-- **Tri fusion (merge sort)** est légèrement plus lent que quick sort, mais reste très stable et prévisible, au prix d’une consommation mémoire supplémentaire.
-- **Tri par tas (heap sort)** est globalement compétitif, avec des performances proches de `O(n log n)` dans tous les cas, sans allocation de mémoire supplémentaire significative.
-- **Timsort** est particulièrement performant sur des données partiellement triées : il profite des *runs* déjà ordonnés et réduit drastiquement le nombre d’opérations nécessaires.
+### 1. La Stabilite d'un Tri
+Un algorithme de tri est dit "stable" s'il preserve l'ordre initial des elements possedant la meme valeur. 
+Par exemple, si nous trions des eleves par note, et qu'Alice (15/20) apparait avant Charlie (15/20) dans la liste initiale, un tri stable (comme Timsort ou le Tri par insertion) garantira qu'Alice restera devant Charlie a la fin. Un tri instable (comme le Tri rapide ou par selection) pourrait inverser leurs positions. C'est une notion cruciale lors du tri de bases de donnees complexes sur de multiples criteres.
 
-### 3. Temps vs mémoire
+### 2. Le Biais Visuel de l'Interface Graphique
+Dans une interface visuelle, l'animation necessite d'introduire des pauses artificielles (`time.sleep`) pour laisser le temps a l'oeil humain de voir les echanges et les comparaisons. Un algorithme faisant peu d'echanges mais beaucoup de comparaisons pourrait sembler artificiellement rapide si seules les actions visuelles sont chronometrees.
+Pour pallier ce biais, notre moteur d'analyse soustrait mathematiquement le temps de pause de l'interface graphique du chronometre final. Le temps affiche sur nos rapports correspond strictement au temps de calcul effectif du processeur.
 
-Les mesures de consommation mémoire montrent que :
+## Conclusion Objective
 
-- Les algorithmes en place (sélection, bulles, insertion, rapide, tas, peigne) ont une empreinte mémoire faible et assez similaire.
-- Les algorithmes basés sur des fusions (`merge sort`, `timsort`) consomment plus de mémoire à cause des tableaux temporaires, mais cette consommation reste maîtrisée pour les tailles testées dans le cadre du projet.
+A l'issue de nos benchmarks, nous pouvons conclure qu'il n'existe pas d'algorithme "parfait" universel, mais plutot des algorithmes adaptes a des contextes specifiques :
 
-### 4. Synthèse générale
+- Le choix optimal global (Le Vainqueur) : Le Timsort. Il est le plus polyvalent. Etant adaptatif, il exploite les donnees deja partiellement triees (tres frequentes dans le monde reel) pour tomber a une complexite de O(n). C'est pourquoi il est nativement utilise par Python et Java.
+- La vitesse brute : Le Tri rapide (Quick Sort). Sur des donnees totalement aleatoires, il bat tres souvent les autres grace a son excellente "localite de cache", qui optimise la facon dont le processeur lit la memoire RAM.
+- L'environnement contraint : Le Tri par tas (Heap Sort). Contrairement au Timsort ou au Tri Fusion qui necessitent de la memoire supplementaire (O(n)), le Tri par tas maintient une complexite en temps de O(n log n) tout en ayant une complexite spatiale de O(1). Il est indispensable pour les systemes embarques avec tres peu de memoire.
+- Les petites listes : Le Tri par insertion. Sa simplicite le rend extremement rapide sur de tres petites quantites de donnees, au point que des algorithmes avances comme Timsort l'utilisent en sous-routine.
 
-- Pour de **petites tailles**, la différence entre les algos est peu visible, et les surcoûts des algorithmes avancés peuvent même parfois les rendre légèrement plus lents.
-- Pour des **tailles moyennes à grandes**, les algorithmes en `O(n log n)` dominent clairement, surtout `quick sort`, `heap sort` et `timsort`.
-- En conditions réelles (données souvent partiellement triées), **timsort** est l’algorithme le plus adapté et confirme pourquoi il est utilisé dans les bibliothèques standard des langages modernes.
+## Apercu des Resultats
 
----
-
-## Benchmarking et comparaisons
-
-Le projet intègre un module de **benchmark avancé** (`benchmark.py`) qui permet de mesurer :
-
-- Le **temps d’exécution** de chaque algorithme (en millisecondes)
-- La **consommation mémoire** maximale pendant le tri (en Mo)
-- Une **estimation automatique de la complexité asymptotique** (en comparant les courbes mesurées aux modèles théoriques `O(n)`, `O(n log n)`, `O(n²)`, `O(n³)`)
-
-### Modes de benchmark disponibles
-
-1. **Benchmark simple (tous les algos vs différentes tailles)**  
-   Affiche un tableau temps/tailles et, selon l’implémentation choisie, peut générer un graphique matplotlib :
-
-   ```bash
-   python main.py --algo all --bench
-   ```
-
-2. **Comparaison complète de tous les algorithmes**  
-   Compare tous les algos entre eux sur plusieurs tailles, pour le temps **et** la mémoire, puis estime la complexité de chacun :
-
-   ```bash
-   python main.py --algo all --bench-compare
-   ```
-
-3. **Résumé statistique global**  
-   Affiche un résumé synthétique avec temps moyen/min/max, mémoire moyenne/min/max et complexité estimée pour chaque algorithme :
-
-   ```bash
-   python main.py --algo all --bench-summary
-   ```
-
-4. **Duel 1 vs 1 entre deux algorithmes**  
-   Compare deux algos choisis (temps, RAM, complexité estimée, score de victoires) :
-
-   ```bash
-   python main.py --algo all --bench-1v1 bubble quick
-   ```
-
-   Tu peux remplacer `bubble` et `quick` par n’importe quel nom présent dans `ALGORITHMS` (par exemple `selection`, `merge`, `heap`, `tim`, etc.).
-
-### Tailles et métriques
-
-Par défaut, les comparaisons utilisent des tailles croissantes du type :
-
-- `100`, `500`, `1000`, `5000`, `10000`
-
-Pour chaque paire *(algorithme, taille)*, le benchmark :
-
-- génère une liste de flottants aléatoires,
-- exécute l’algorithme sur cette liste,
-- mesure le **temps** avec `time.perf_counter()`,
-- suit la **mémoire** avec `tracemalloc`,
-- stocke les résultats dans une structure du type :
-
-```python
-{
-  "bubble": {
-    100:  {"time": 0.45, "memory": 0.80},
-    500:  {"time": 5.32, "memory": 1.10},
-    1000: {"time": 22.15, "memory": 1.45},
-    # ...
-  },
-  # ...
-}
-```
-
-Ces outils permettent de **visualiser concrètement** l’écart entre les algorithmes en `O(n²)` et ceux en `O(n log n)`, aussi bien en temps qu’en consommation mémoire, et de vérifier expérimentalement les complexités théoriques vues en cours.
-
----
-
----
-
-## Aspect Visuel et Multithreading : Les Papyrus de Héron
-
-Afin d'apporter un aspect visuel à l'efficacité des algorithmes de tri, une interface graphique a été développée en utilisant **Pygame** sur le thème visuel moderne égyptien "Les Papyrus de Héron" (nuits étoilées, effets de verre et accents dorés).
-L'exécution de l'interface utilise le **multithreading** : l'interface tourne sur le thread principal pour rester fluide, tandis que chaque algorithme s'exécute sur son propre thread, permettant d'observer les comparaisons simultanément (parallélisation).
-
-Pour bien comprendre ce qui se passe à l'écran, la longueur des barres encode la valeur (plus c'est grand, plus c'est haut) et un code couleur spécifique a été mis en place :
-
-- **Bleu Nuit (Lapis Lazuli)** : État neutre de l'élément (`COLOR_LAPIS`).
-- **Rouge Cornaline** : Barre active ou en cours de déplacement/swap (`COLOR_CARNELIAN`).
-- **Doré (Or)** : Position définitivement triée de l'élément ou mise en évidence d'une fin de tri (`COLOR_GOLD`).
-- **Vert Émeraude / Rouge Alizarine** : Badges signalant respectivement la stabilité ou l'instabilité de l'algorithme.
-- **Beige doux (Papyrus)** : Texte principal et descriptions (`COLOR_PAPYRUS`).
-
-Les compteurs en haut de chaque manuscrit (algorithme) permettent de visualiser concrètement pourquoi des algorithmes en *O(n log n)* sont plus performants que ceux en *O(n²)* en comptant le nombre de comparaisons et d'échanges nécessaires.
-
----
-
-## Conclusion
-
-Au-delà des 7 algorithmes imposés par le sujet, nous avons implémenté le **Timsort** — l'algorithme utilisé nativement par Python (`sorted()`), Java, Android et Swift. Créé en 2002 par Tim Peters, il est un hybride entre le tri par insertion et le tri fusion.
-
-Sa force réside dans l'exploitation des séquences déjà partiellement triées dans les données réelles : il découpe la liste en petits blocs (appelés *runs*), les trie avec le tri par insertion, puis les fusionne. Cela lui permet d'atteindre O(n) sur une liste presque triée, tout en garantissant O(n log n) dans le pire cas.
-
-C'est l'algorithme qui surpasserait tous les autres de ce projet en conditions réelles — ce qui explique pourquoi il est devenu le standard dans les langages modernes.
+![Analyse des performances des algorithmes](docs/analyse_apercu.png)
