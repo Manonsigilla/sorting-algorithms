@@ -10,7 +10,7 @@ Implémente 8 algorithmes de tri avec visualisation animée et benchmarking.
 ## Algorithmes implémentés
 
 | Algorithme | Complexité moyenne | Complexité pire cas | Mémoire supplémentaire |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Tri par sélection | O(n²) | O(n²) | Non |
 | Tri à bulles | O(n²) | O(n) si déjà trié | Non |
 | Tri par insertion | O(n²) | O(n) si déjà trié | Non |
@@ -67,6 +67,24 @@ python main.py --algo all --gui --threads
 ## Observations sur les performances
 
 > À compléter après avoir lancé `python main.py --algo all --bench`
+
+---
+
+## Aspect Visuel et Multithreading (Pygame)
+
+Afin d'apporter un aspect visuel à l'efficacité des algorithmes de tri, une interface graphique a été développée en utilisant **Pygame**.
+L'exécution de l'interface utilise le **multithreading** : l'interface tourne sur le thread principal pour rester fluide, tandis que chaque algorithme s'exécute sur son propre thread, permettant d'observer les comparaisons simultanément (parallélisation).
+
+Pour bien comprendre ce qui se passe à l'écran, la longueur des barres encode la valeur (plus c'est grand, plus c'est haut) et un code couleur spécifique a été mis en place :
+
+- **Bleu** : État neutre de l'élément.
+- **Orange** : Barres actuellement comparées.
+- **Rouge** : Barre active ou en cours de déplacement (swap).
+- **Vert menthe** : Minimum trouvé (dans le tri par sélection) ou pivot actuel (tri rapide).
+- **Violet** : Pivot secondaire (tri rapide).
+- **Vert** : Position définitivement triée de l'élément.
+
+Les compteurs en haut de chaque algorithme permettent de visualiser concrètement pourquoi des algorithmes en *O(n log n)* sont plus performants que ceux en *O(n²)* en comptant le nombre d'étapes nécessaires.
 
 ---
 
