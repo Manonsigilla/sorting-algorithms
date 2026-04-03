@@ -339,9 +339,13 @@ class SorterView:
         self.array = arr
         self.is_done = done
         
-        if isinstance(indices, dict): self.active_indices = indices.get("red", [])
-        elif indices: self.active_indices = list(indices)
-        else: self.active_indices = []
+        if isinstance(indices, dict):
+            # Picks "swap" indices if they exist, otherwise picks "compare"
+            self.active_indices = indices.get("swap", indices.get("compare", []))
+        elif indices: 
+            self.active_indices = list(indices)
+        else: 
+            self.active_indices = []
 
         if metrics:
             self.steps = metrics["steps"]
@@ -487,12 +491,20 @@ class SortApp:
         def callback(state, indices):
             nonlocal steps, swaps
             steps += 1
-            if indices: swaps += 1
+            
+            # Only count as a swap if it's actually a swap action
+            if isinstance(indices, dict) and "swap" in indices:
+                swaps += 1
+            elif isinstance(indices, tuple) or isinstance(indices, list):
+                swaps += 1
             
             self.step_event.wait()
             
             metrics = {"steps": steps, "swaps": swaps, "time": time.perf_counter() - start_time, "cpu": process.cpu_percent()}
-            self.ui_queue.put({"id": algo_id, "state": state, "indices": indices, "done": False, "metrics": metrics, "sound": "swap" if indices else None})
+            
+            # Sound is only played on swaps
+            play_sound = "swap" if (isinstance(indices, dict) and "swap" in indices) else None
+            self.ui_queue.put({"id": algo_id, "state": state, "indices": indices, "done": False, "metrics": metrics, "sound": play_sound})
             
             delay = 0.05 / self.slider.get_speed_multiplier()
             
